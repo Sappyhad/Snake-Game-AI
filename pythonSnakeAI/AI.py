@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
-from helper import plot
+from PlotHelper import plot
 
 MAX_MEMORY = 200_000
 BATCH_SIZE = 2000
