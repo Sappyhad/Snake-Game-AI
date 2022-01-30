@@ -29,7 +29,6 @@ SPEED = 40
 
 
 class SnakeGameAI:
-
     # Constructor
     def __init__(self, w=640, h=480):
         # w-width
@@ -44,32 +43,18 @@ class SnakeGameAI:
 
     # Function for resetting to initial state of the game
     def reset(self):
-        # Initial game state for resetting
+        # init game state
         self.direction = Direction.RIGHT
 
-        # The Head of Snake
-        self.head = Point(self.w / 2, self.h / 2)
-
-        # Snake = head + point + point
+        self.head = Point(self.w/2, self.h/2)
         self.snake = [self.head,
-                      Point(self.head.x - SNAKE_SIZE, self.head.y),
-                      Point(self.head.x - (2 * SNAKE_SIZE), self.head.y)]
+                      Point(self.head.x-SNAKE_SIZE, self.head.y),
+                      Point(self.head.x-(2*SNAKE_SIZE), self.head.y)]
 
         self.score = 0
         self.food = None
         self._place_food()
         self.frame_iteration = 0
-
-    # Placing the food on the game board
-    def _place_food(self):
-        # Getting random point
-        x = random.randint(0, (self.w - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
-        y = random.randint(0, (self.h - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
-        # Setting food on place
-        self.food = Point(x, y)
-        # Checking if food is being placed on the snake. If so, recursively getting new random point
-        if self.food in self.snake:
-            self._place_food()
 
     # Steps of game actions
     def play_step(self, action):
@@ -121,6 +106,17 @@ class SnakeGameAI:
             return True
 
         return False
+
+    # Placing the food on the game board
+    def _place_food(self):
+        # Getting random point
+        x = random.randint(0, (self.w - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
+        y = random.randint(0, (self.h - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
+        # Setting food on place
+        self.food = Point(x, y)
+        # Checking if food is being placed on the snake. If so, recursively getting new random point
+        if self.food in self.snake:
+            self._place_food()
 
     # Updating UI -> help function
     def _update_ui(self):
