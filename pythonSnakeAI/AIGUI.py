@@ -1,10 +1,10 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMenuBar, QAction, qApp, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMenuBar, QAction, qApp, QFileDialog
 import AI
 import sys
 
-#TODO: 30.01 lista pod przyciskiem QVBoxLayout może
+
 #dwa layouty zasysające wykres i okienko gry
 #menu bar
 
@@ -31,51 +31,36 @@ class AIController(QMainWindow):
         exitAct = QAction('&Save and Exit',self)
         exitAct.triggered.connect(qApp.quit) #to trzeba będzie zmienić jeszcze żeby zapisywało
 
+        openAct = QAction('&Open',self)
+        openAct.triggered.connect(self.open)
+
         fileMenu = menuBar.addMenu("&File")
         fileMenu.addAction("&New")
-        fileMenu.addAction("&Open")
+        fileMenu.addAction(openAct)
         fileMenu.addAction(exitAct)
 
 
     def open(self):
         """
         Funkcja otwierająca i startująca AI, otwiera model, określa na podstawie nazwy pliku nazwe modelu
+        Jeśli nie istnieje plik o danej nazwie popup window pyta się czy go utworzyć
         :return:
         """
-        return
+        filename = QFileDialog.getOpenFileName()
+        filename = filename[0]
+        filename = filename.split('/')
+        filename = filename[-1].split('.')
+        filename = filename[0]
+        AI.train(filename)
+        print(filename)
+
+
 
     def save(self):
         """
         Funkcja zapisująca AI
         :return:
         """
-        return
-
-    def generateButtons(self):
-        '''
-        Funkcja tworząca odpowiednią ilość przycisków na start programu (po jednym dla każdego wczytanego AI)
-        Zasysa ilość plików i tworzy je w forze https://stackoverflow.com/questions/54927194/python-creating-buttons-in-loop-in-pyqt5/54929235
-        Do usunięcia
-        :return:
-        '''
-        pass
-
-    def newButton(self):
-        '''
-        Funkcja generująca nowy przycisk przy stworzeniu nowego AI
-        Używane tylko w sytuacji użycia New w menu bar
-        Do usunięcia
-        :return:
-        '''
-        pass
-
-    def openList(self):
-        '''
-        Funkcja otwierająca liste atrybutów pod wciśniętym przyciskiem
-        Do usunięcia
-        :return:
-        '''
-        self.label1.show()
         pass
 
     def loadPlot(self):

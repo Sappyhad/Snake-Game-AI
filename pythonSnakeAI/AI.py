@@ -5,19 +5,52 @@ from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from PlotHelper import plot
+import os
+
 
 MAX_MEMORY = 200_000
 BATCH_SIZE = 2000
 LR = 0.001
+#file_name = "model1.pth"
+
+
+def load_nog(file_name):
+    file_split = file_name.split(".")
+    file = file_split[0]
+    file = file + '.txt'
+    file_path = "./files/"
+    file = file_path + file
+    if os.path.isfile(file):
+        with open(file, 'r') as f:
+            x = f.readline()
+            return int(x)
+    else:
+        return 0
+
+
 
 class AI:
-    def __init__(self):
-        self.number_of_games = 0
+    def __init__(self, nog: int = 0):
+        self.number_of_games = nog
         self.epsilon = 0  # randomness
         self.gamma = 0.9  # discount rate MUST BE SMALLER THAN 1
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+
+    def save_nog(self, file_name):
+        file_split = file_name.split(".")
+        file = file_split[0]
+        file = file + '.txt'
+        file_path = "./files/"
+        file = file_path + file
+        with open(file, 'w') as f:
+            f.write(str(self.number_of_games))
+            f.close()
+
+
+
+
 
     # Get State
     def get_state(self, game):
@@ -99,13 +132,15 @@ class AI:
         return final_move
 
 
-def train():
+def train(file_name='model1.pth'):
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
     record = 0
-    agent = AI()
+    agent = AI(load_nog(file_name))
     game = SnakeGameAI()
+
+    agent.model.load(file_name)
 
     while True:
         # get old state
@@ -131,7 +166,9 @@ def train():
 
             if score > record:
                 record = score
-                agent.model.save()
+                agent.model.save(file_name)
+
+
 
             # to dla mnie
             print("Games Played:", agent.number_of_games, "\nScore: ", score, "\nRecord: ", record)
@@ -141,6 +178,8 @@ def train():
             mean_score = total_score / agent.number_of_games
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)
+            #zapis gier
+            agent.save_nog(file_name)
 
 
 
