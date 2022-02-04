@@ -19,16 +19,16 @@ class Linear_QNet(nn.Module):
     #zakładamy w kodzie że modele będą w tym danym folderze, w QT można będzie to może zmienić więc też do poprawki
     def save(self, file_name='model1.pth'):
         #czyli folder też będzie podawany z GUI
-        mode_folder_path = './model'
-        if not os.path.exists(mode_folder_path):
-            os.makedirs(mode_folder_path)
+        # mode_folder_path = './model'
+        # if not os.path.exists(mode_folder_path):
+        #     os.makedirs(mode_folder_path)
 
-        file_name = os.path.join(mode_folder_path, file_name)
+        #file_name = os.path.join(mode_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
 
     def load(self, file_name='model1.pth'):
-        mode_folder_path = './model'
-        file_name = os.path.join(mode_folder_path, file_name)
+        # mode_folder_path = './model'
+        # file_name = os.path.join(mode_folder_path, file_name)
 
         if os.path.exists(file_name):
             self.load_state_dict(torch.load(file_name))

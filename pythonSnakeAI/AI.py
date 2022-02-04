@@ -8,13 +8,17 @@ from PlotHelper import plot
 import os
 
 
+
 MAX_MEMORY = 200_000
 BATCH_SIZE = 2000
 LR = 0.001
-#file_name = "model1.pth"
+
+
 
 
 def load_nog(file_name):
+    file_name = file_name.split('/')
+    file_name = file_name[-1]
     file_split = file_name.split(".")
     file = file_split[0]
     file = file + '.txt'
@@ -38,14 +42,18 @@ class AI:
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
-    def save_nog(self, file_name):
+    def save_info(self, file_name, score, record):
+        file_name = file_name.split('/')
+        file_name = file_name[-1]
         file_split = file_name.split(".")
         file = file_split[0]
         file = file + '.txt'
         file_path = "./files/"
         file = file_path + file
         with open(file, 'w') as f:
-            f.write(str(self.number_of_games))
+            f.write(f'{str(self.number_of_games)}\n')
+            f.write(f'{str(score)}\n')
+            f.write(f'{str(record)}\n')
             f.close()
 
 
@@ -171,7 +179,8 @@ def train(file_name='model1.pth'):
 
 
             # to dla mnie
-            print("Games Played:", agent.number_of_games, "\nScore: ", score, "\nRecord: ", record)
+            #print("Games Played:", agent.number_of_games, "\nScore: ", score, "\nRecord: ", record)
+            #agent.getinfo()
 
             plot_scores.append(score)
             total_score += score
@@ -179,7 +188,7 @@ def train(file_name='model1.pth'):
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)
             #zapis gier
-            agent.save_nog(file_name)
+            agent.save_info(file_name, score, record)
 
 
 
