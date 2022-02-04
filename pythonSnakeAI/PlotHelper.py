@@ -4,6 +4,9 @@ from IPython import display
 plt.ion()
 
 def plot(scores, mean_scores):
+    '''
+    Funkcja pomocnicza przy tworzeniu wykresu postępu AI.
+    '''
     display.clear_output(wait=True)
     display.display(plt.gcf())
     plt.clf()
@@ -17,4 +20,3 @@ def plot(scores, mean_scores):
     plt.text(len(mean_scores)-1, mean_scores[-1], str(mean_scores[-1]))
     plt.show(block=False)
     plt.pause(.1)
-    #TODO: zapis co loopa do pliku punktów (x,y), rozpracowywanie później na podstawie ilości gier

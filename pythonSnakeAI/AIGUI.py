@@ -9,7 +9,7 @@ import sys
 
 class FilePopup(QWidget):
     '''
-    Klasa tworząca okienko New
+    Klasa tworząca okienko do tworzenia plików.
     '''
     def __init__(self):
         super().__init__()
@@ -26,17 +26,11 @@ class FilePopup(QWidget):
         self.b1.move(20,60)
         self.b1.clicked.connect(self.createCheck)
 
-        # self.b2 = QPushButton(self)
-        # self.b2.setText("Close")
-        # self.b2.move(100,60)
-        
-        # self.l1 = QLabel(self)
-        # self.l1.setText("Please note that model files should be .pth file")
-        # self.l1.move(20,100)
-        # self.l1.adjustSize()
-
 
     def createCheck(self):
+        '''
+        Funkcja sprawdza poprawność nazwy tworzonego pliku i tworzy plik.
+        '''
         filename = self.text.text()
         if filename[-4:] != ".pth":
             filename1 = filename+".pth"
@@ -53,7 +47,9 @@ class FilePopup(QWidget):
 
 
 class AIController(QMainWindow):
-
+    '''
+    Main Window.
+    '''
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AI Controller")
@@ -75,8 +71,7 @@ class AIController(QMainWindow):
 
     def _createMenu(self):
         '''
-        Funkcja tworząca pasek menu
-        :return:
+        Funkcja tworząca pasek menu.
         '''
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(False)
@@ -94,6 +89,9 @@ class AIController(QMainWindow):
 
 
     def _createLabels(self):
+        '''
+        Funkcja dodająca opis AI.
+        '''
         self.l_nog.setText("Number of games: ")
         self.l_record.setText("Record: ")
         self.l_score.setText("Score: ")
@@ -108,8 +106,7 @@ class AIController(QMainWindow):
     def open_ai(self):
         """
         Funkcja otwierająca i startująca AI, otwiera model, określa na podstawie nazwy pliku nazwe modelu
-        Ustawia label z nazwą AI
-        :return:
+        Ustawia label z nazwą AI.
         """
 
         self.filename = QFileDialog.getOpenFileName()
@@ -131,6 +128,9 @@ class AIController(QMainWindow):
 
 
     def new_file(self):
+        '''
+        Funkcja wywołuje okienko tworzące plik.
+        '''
         self.nf = FilePopup()
         self.nf.show()
 
@@ -138,10 +138,8 @@ class AIController(QMainWindow):
 
     def updateInfo(self, path):
         '''
-        Funkcja zmieniająca informacje wyświetlające się w GUI
-        :return:
+        Funkcja zmieniająca informacje wyświetlające się w GUI.
         '''
-        #self.l_nog.setText("dziala")
         l = []
         with open(path, 'r') as f:
             l = f.readlines()

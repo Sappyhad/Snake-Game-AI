@@ -9,6 +9,9 @@ font = pygame.font.Font('arial.ttf', 25)
 
 
 class Direction(Enum):
+    '''
+    Klasa określająca kierunki dla modelu.
+    '''
     RIGHT = 1
     LEFT = 2
     UP = 3
@@ -29,10 +32,15 @@ SPEED = 80
 
 
 class SnakeGameAI:
-    # Constructor
+    '''
+    Klasa samej mechaniki gry.
+    '''
     def __init__(self, w=640, h=480):
-        # w-width
-        # h-height
+        '''
+        Funkcja odpowiedzialna za wartości początkowe.
+        :param w: długość
+        :param h: wysokość
+        '''
         self.w = w
         self.h = h
         # Initial display
@@ -43,6 +51,9 @@ class SnakeGameAI:
 
     # Function for resetting to initial state of the game
     def reset(self):
+        '''
+        Funkcja resetująca do początkowych wartości gry.
+        '''
         # init game state
         self.direction = Direction.RIGHT
 
@@ -58,6 +69,11 @@ class SnakeGameAI:
 
     # Steps of game actions
     def play_step(self, action):
+        '''
+        Funkcja odpowiedzialna za poszczególne mechaniki w grze po ustaleniu akcji podejmowanej przez model.
+        :param action: akcja podejmowana przez model
+        :return: nagroda punktowa, status końca gry, punktacja.
+        '''
         self.frame_iteration += 1
         # 1. Collecting input from user
         for event in pygame.event.get():
@@ -84,7 +100,6 @@ class SnakeGameAI:
             self.score += 1
             reward = 10
             self._place_food()
-            #self.snake.append(Point(self.head.x-((2+self.score)*SNAKE_SIZE), self.head.y))
         else:
             self.snake.pop()
 
@@ -97,6 +112,11 @@ class SnakeGameAI:
 
     # Is snake colliding with something
     def is_collision(self, pt=None):
+        '''
+        Funkcja określająca czy wystąpiła kolizja głowy węża z ramką lub z wężem.
+        :param pt: sprawdzany punkt
+        :return: TRUE/FALSE
+        '''
         if pt is None:
             pt = self.head
         # Hits boundary
@@ -110,6 +130,9 @@ class SnakeGameAI:
 
     # Placing the food on the game board
     def _place_food(self):
+        '''
+        Funkcja odpowiedzialna za umiejscowienie jedzenia na planszy gry.
+        '''
         # Getting random point
         x = random.randint(0, (self.w - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
         y = random.randint(0, (self.h - SNAKE_SIZE) // SNAKE_SIZE) * SNAKE_SIZE
@@ -121,6 +144,10 @@ class SnakeGameAI:
 
     # Updating UI -> help function
     def _update_ui(self):
+        '''
+        Funkcja pomocnicza do odświeżania stanu gry na ekranie.
+        tj.: Obrazuje akcje w grze.
+        '''
         self.display.fill(BLACK)
 
         for pt in self.snake:
@@ -135,6 +162,10 @@ class SnakeGameAI:
 
     # Movement -> help function
     def _move(self, action):
+        '''
+        Funkcja pomocnicza do określenia kierunku ruchu węża na podstawie decyzji jaką podjął model.
+        :param action: akcja podejmowana przez model
+        '''
         # [straight, right, left]
         clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
         idx = clock_wise.index(self.direction)

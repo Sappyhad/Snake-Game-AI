@@ -9,14 +9,15 @@ import os
 
 
 
-MAX_MEMORY = 200_000
-BATCH_SIZE = 2000
-LR = 0.001
-
-
+MAX_MEMORY = 200_000  # Rozmiar pamięci maksymalnej
+BATCH_SIZE = 2000  # Liczba sampli propagowanych przez sieć neuronową
+LR = 0.001  # Learning Rate
 
 
 def load_nog(file_name):
+    '''
+    Funkcja wczytująca liczbę gier z pliku txt modelu.
+    '''
     file_name = file_name.split('/')
     file_name = file_name[-1]
     file_split = file_name.split(".")
@@ -34,15 +35,25 @@ def load_nog(file_name):
 
 
 class AI:
+    '''
+    Klasa AI odpowiadająca za implementację modelu do gry.
+    '''
     def __init__(self, nog: int = 0):
-        self.number_of_games = nog
+        '''
+        Funkcja z wartościami inicjującymi.
+        :param nog: liczba rozegranych gier
+        '''
         self.epsilon = 0  # randomness
         self.gamma = 0.9  # discount rate MUST BE SMALLER THAN 1
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+        self.number_of_games = nog
 
     def save_info(self, file_name, score, record):
+        '''
+        Funkcja zapisująca liczbę gier, score i rekord do pliku txt modelu.
+        '''
         file_name = file_name.split('/')
         file_name = file_name[-1]
         file_split = file_name.split(".")
@@ -57,11 +68,13 @@ class AI:
             f.close()
 
 
-
-
-
     # Get State
     def get_state(self, game):
+        '''
+        Funkcja okreslająca stan gry. Wszystkie parametry, po obliczeniu, kompresowane są do listy numpy.
+        :param game: lista parametrów z game.py
+        :return: stan gry w danym momencie
+        '''
         head = game.snake[0]
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
@@ -109,9 +122,20 @@ class AI:
 
 
     def remember(self, state, action, reward, next_state, game_over):
+        '''
+        Funkcja zapamiętująca jeden cykl (krok) w grze.
+        :param state: stan gry
+        :param action: akcja
+        :param reward: nagroda punktowa
+        :param next_state: nastepny stan gry
+        :param game_over: koniec gry
+        '''
         self.memory.append((state, action, reward, next_state, game_over))  # pop left is MAX_MEMORY is reached
 
     def train_long_memory(self):
+        '''
+        Funkcja odpowiedzialna za zapamiętywanie długoterminowe (wiele cykli gier)
+        '''
         if len(self.memory) > BATCH_SIZE:
             mini_sample = random.sample(self.memory, BATCH_SIZE)  # list of tuples
         else:
@@ -121,9 +145,23 @@ class AI:
         self.trainer.train_step(states, actions, rewards, next_states, game_overs)
 
     def train_short_memory(self, state, action, reward, next_state, game_over):
+        '''
+        Funkcja odpowiedzialna za krótkoterminowe (jeden cykl gry)
+        :param state: stan gry
+        :param action: akcja
+        :param reward: nagroda punktowa
+        :param next_state: nastepny stan gry
+        :param game_over: koniec gry
+        '''
         self.trainer.train_step(state, action, reward, next_state, game_over)
 
     def get_action(self, state):
+        '''
+        Funkcja podejmująca decyzje jaką akcję ma wykonać model.
+        Wszystko na poczatku zależne jest od losowości (epsilon).
+        :param state: stan gry
+        :return: finalny akcja
+        '''
         # random moves: tradeoff between exploration and exploitation in deep learning
         self.epsilon = 80 - self.number_of_games
         final_move = [0, 0, 0]
@@ -141,6 +179,10 @@ class AI:
 
 
 def train(file_name='model1.pth'):
+    '''
+    Funkcja odpowiedzialna za główną pętlę gry, pozyskiwanie parametrów do nauki modelu i rysowanie wykresu na bieżąco.
+    :param file_name: nazwa pliku modelu
+    '''
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
@@ -176,17 +218,12 @@ def train(file_name='model1.pth'):
                 record = score
                 agent.model.save(file_name)
 
-
-
-            # to dla mnie
-            #print("Games Played:", agent.number_of_games, "\nScore: ", score, "\nRecord: ", record)
-            #agent.getinfo()
-
             plot_scores.append(score)
             total_score += score
             mean_score = total_score / agent.number_of_games
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)
+
             #zapis gier
             agent.save_info(file_name, score, record)
 
