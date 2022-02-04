@@ -1,22 +1,37 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QMenuBar, QAction, qApp, QVBoxLayout
-import AI
+
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QLabel, QMessageBox, QWidget
+from AI import train
+from PyQt5.QtCore import QFileSystemWatcher
 import sys
 
-#TODO: 30.01 lista pod przyciskiem QVBoxLayout może
-#dwa layouty zasysające wykres i okienko gry
-#menu bar
 
+
+class FilePopup(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Create New File")
+        self.setGeometry(400,200,400,200)
 
 
 class AIController(QMainWindow):
+
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("AI Controller")
-        self.setGeometry(700,700,700,700)
+        self.setGeometry(200,200,200,200)
+        self.ai_train = None
+        self.filename = "./files/model1.txt"
+        self.watcher = QFileSystemWatcher(self)
+        self.watcher.addPath(self.filename)
+        self.l_score = QLabel(self)
+        self.l_record = QLabel(self)
+        self.l_nog = QLabel(self)
+        self.l_name = QLabel(self)
+        self.watcher.fileChanged.connect(self.updateInfo)
         self._createMenu()
+        self._createLabels()
+
+
 
 
     def _createMenu(self):
@@ -28,69 +43,80 @@ class AIController(QMainWindow):
         menuBar.setNativeMenuBar(False)
         self.setMenuBar(menuBar)
 
-        exitAct = QAction('&Save and Exit',self)
-        exitAct.triggered.connect(qApp.quit) #to trzeba będzie zmienić jeszcze żeby zapisywało
+        openAct = QAction('&Open',self)
+        openAct.triggered.connect(self.open_ai)
+
+        newAct = QAction('&New',self)
+        newAct.triggered.connect(self.new_file)
 
         fileMenu = menuBar.addMenu("&File")
-        fileMenu.addAction("&New")
-        fileMenu.addAction("&Open")
-        fileMenu.addAction(exitAct)
+        fileMenu.addAction(newAct)
+        fileMenu.addAction(openAct)
 
 
-    def open(self):
+    def _createLabels(self):
+        self.l_nog.setText("Number of games: ")
+        self.l_record.setText("Record: ")
+        self.l_score.setText("Score: ")
+        self.l_nog.move(25,40)
+        self.l_record.move(25,55)
+        self.l_score.move(25,70)
+        self.l_nog.adjustSize()
+        self.l_record.adjustSize()
+        self.l_score.adjustSize()
+
+
+    def open_ai(self):
         """
         Funkcja otwierająca i startująca AI, otwiera model, określa na podstawie nazwy pliku nazwe modelu
+        Ustawia label z nazwą AI
         :return:
         """
-        return
 
-    def save(self):
-        """
-        Funkcja zapisująca AI
-        :return:
-        """
-        return
+        self.filename = QFileDialog.getOpenFileName()
+        if not self.filename[0] =="":
+            filename = self.filename[0]
+            self.filename = self.filename[0].split('.')
+            self.filename = self.filename[0].split('/')
 
-    def generateButtons(self):
-        '''
-        Funkcja tworząca odpowiednią ilość przycisków na start programu (po jednym dla każdego wczytanego AI)
-        Zasysa ilość plików i tworzy je w forze https://stackoverflow.com/questions/54927194/python-creating-buttons-in-loop-in-pyqt5/54929235
-        Do usunięcia
-        :return:
-        '''
-        pass
+            self.l_name.setText(f'Nazwa AI: {self.filename[-1]}')
+            self.l_name.move(25, 25)
+            self.l_name.adjustSize()
 
-    def newButton(self):
-        '''
-        Funkcja generująca nowy przycisk przy stworzeniu nowego AI
-        Używane tylko w sytuacji użycia New w menu bar
-        Do usunięcia
-        :return:
-        '''
-        pass
+            self.filename = "./files/" + self.filename[-1] + ".txt"
+            self.watcher.addPath(self.filename)
+            print(self.filename)
+            # filename = filename.split('/')
+            # filename = filename[-1]
+            self.ai_train = train(filename)
 
-    def openList(self):
+
+    def new_file(self):
+        self.nf = FilePopup()
+        self.nf.show()
+
+
+
+    def updateInfo(self, path):
         '''
-        Funkcja otwierająca liste atrybutów pod wciśniętym przyciskiem
-        Do usunięcia
+        Funkcja zmieniająca informacje wyświetlające się w GUI
         :return:
         '''
-        self.label1.show()
-        pass
+        #self.l_nog.setText("dziala")
+        l = []
+        with open(path, 'r') as f:
+            l = f.readlines()
+            f.close()
+        print(l)
+        self.l_nog.setText(f'Number of games: {l[0]}')
+        self.l_score.setText(f'Score: {l[1]}')
+        self.l_record.setText(f'Record: {l[2]}')
+        self.l_nog.adjustSize()
+        self.l_score.adjustSize()
+        self.l_record.adjustSize()
 
-    def loadPlot(self):
-        '''
-        Funkcja wczytująca wykres dla AI
-        :return:
-        '''
-        pass
 
-    def loadGameWindow(self):
-        '''
-        Funkcja wczytująca główne okienko gry
-        :return:
-        '''
-        pass
+
 
 
 if __name__ == "__main__":
