@@ -17,4 +17,4 @@ def plot(scores, mean_scores):
     plt.text(len(mean_scores)-1, mean_scores[-1], str(mean_scores[-1]))
     plt.show(block=False)
     plt.pause(.1)
-    #zapis co loopa do pliku punktów (x,y), rozpracowywanie później na podstawie ilości gier
+    #TODO: zapis co loopa do pliku punktów (x,y), rozpracowywanie później na podstawie ilości gier

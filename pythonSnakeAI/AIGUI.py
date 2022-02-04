@@ -1,5 +1,5 @@
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QLabel, QLineEdit, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QLabel, QLineEdit, QWidget, QPushButton, qApp
 from AI import train
 from PyQt5.QtCore import QFileSystemWatcher
 from os.path import isfile
@@ -25,11 +25,16 @@ class FilePopup(QWidget):
         self.b1.setText("Create")
         self.b1.move(20,60)
         self.b1.clicked.connect(self.createCheck)
+
+        # self.b2 = QPushButton(self)
+        # self.b2.setText("Close")
+        # self.b2.move(100,60)
+        
         # self.l1 = QLabel(self)
         # self.l1.setText("Please note that model files should be .pth file")
         # self.l1.move(20,100)
         # self.l1.adjustSize()
-        #TODO: w tym miejscu obejście -> jeśli plik nie będzie pth to ścieżka się do niego dopisze
+
 
     def createCheck(self):
         filename = self.text.text()
@@ -44,6 +49,7 @@ class FilePopup(QWidget):
         if not isfile(filename2):
             with open(filename2, 'w') as f:
                 f.close()
+
 
 
 class AIController(QMainWindow):
