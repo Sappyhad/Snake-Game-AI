@@ -1,16 +1,49 @@
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QLabel, QMessageBox, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QLabel, QLineEdit, QWidget, QPushButton
 from AI import train
 from PyQt5.QtCore import QFileSystemWatcher
+from os.path import isfile
 import sys
 
 
 
 class FilePopup(QWidget):
+    '''
+    Klasa tworząca okienko New
+    '''
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Create New File")
         self.setGeometry(400,200,400,200)
+
+        self.text = QLineEdit(self)
+        self.text.move(20,20)
+        self.text.resize(360,30)
+        self.text.setText("./model/")
+
+        self.b1 = QPushButton(self)
+        self.b1.setText("Create")
+        self.b1.move(20,60)
+        self.b1.clicked.connect(self.createCheck)
+        # self.l1 = QLabel(self)
+        # self.l1.setText("Please note that model files should be .pth file")
+        # self.l1.move(20,100)
+        # self.l1.adjustSize()
+        #TODO: w tym miejscu obejście -> jeśli plik nie będzie pth to ścieżka się do niego dopisze
+
+    def createCheck(self):
+        filename = self.text.text()
+        if filename[-4:] != ".pth":
+            filename1 = filename+".pth"
+            filename2 = filename+".txt"
+            filename2 = filename2.replace('./model/', './files/')
+        #print(filename2)
+        if not isfile(filename1):
+            with open(filename1, 'w') as f:
+                f.close()
+        if not isfile(filename2):
+            with open(filename2, 'w') as f:
+                f.close()
 
 
 class AIController(QMainWindow):
