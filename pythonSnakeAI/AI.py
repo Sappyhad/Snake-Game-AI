@@ -24,7 +24,7 @@ def load_nog(file_name):
     file = file + '.txt'
     file_path = "./files/"
     file = file_path + file
-    if os.path.isfile(file):
+    if os.path.isfile(file) and os.stat(file).st_size > 0:
         with open(file, 'r') as f:
             x = f.readline()
             return int(x)
