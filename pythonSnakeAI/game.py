@@ -28,7 +28,7 @@ GREEN2 = (50,205,50)
 BLACK = (0, 0, 0)
 
 SNAKE_SIZE = 20
-SPEED = 80
+SPEED = 1000
 
 
 class SnakeGameAI:
